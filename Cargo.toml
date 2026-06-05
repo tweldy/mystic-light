@@ -1,0 +1,43 @@
+[package]
+name = "mystic-light"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.74"
+description = "Direct per-LED control of MSI Mystic Light addressable-RGB (JARGB) headers over USB HID."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/tweldy/mystic-light"
+homepage = "https://github.com/tweldy/mystic-light"
+documentation = "https://docs.rs/mystic-light"
+readme = "README.md"
+keywords = ["msi", "argb", "rgb", "led", "hid"]
+categories = ["hardware-support", "command-line-utilities"]
+exclude = ["/.github", "/docs", "/udev"]
+
+[features]
+default = ["hidapi", "cli"]
+# The real USB-HID backend. Disable for a pure, dependency-light protocol library
+# (`cargo build --no-default-features`).
+hidapi = ["dep:hidapi"]
+# The `mystic` command-line tool. Implies the HID backend.
+cli = ["dep:clap", "dep:anyhow", "hidapi"]
+
+[dependencies]
+thiserror = "2"
+hidapi = { version = "2", optional = true }
+clap = { version = "4", features = ["derive"], optional = true }
+anyhow = { version = "1", optional = true }
+
+[lib]
+name = "mystic_light"
+
+[[bin]]
+name = "mystic"
+required-features = ["cli"]
+
+[[example]]
+name = "breathe"
+required-features = ["hidapi"]
+
+[profile.release]
+lto = true
+strip = true

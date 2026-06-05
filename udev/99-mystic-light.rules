@@ -1,0 +1,8 @@
+# Allow non-root access to the MSI Mystic Light HID interface.
+#
+# Install:
+#   sudo cp udev/99-mystic-light.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload-rules && sudo udevadm trigger
+#
+# Adjust GROUP to one your user belongs to (plugdev is common on Debian/Ubuntu).
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="0db0", ATTRS{idProduct}=="0076", MODE="0660", GROUP="plugdev"
