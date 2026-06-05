@@ -18,6 +18,9 @@ Initial release.
 - High-level `MysticLight` controller: `set_leds`, `fill`, `off`, `all_off`.
 - `Rgb` color type with hex and HSV helpers.
 - `mystic` CLI: `list`, `fill`, `off`, `rainbow`.
+- `mysticd` socket daemon (feature `daemon`) with a line protocol, so other
+  processes/languages can drive the LEDs through a single HID owner; sample
+  systemd unit in `dist/`.
 - `breathe` example, dual MIT/Apache-2.0 licensing, CI, and a udev rule.
 
 [Unreleased]: https://github.com/tweldy/mystic-light/compare/v0.1.0...HEAD

@@ -1,0 +1,28 @@
+# mysticd — owns the Mystic Light HID device, serves a unix socket.
+#
+# Install:
+#   sudo install -m755 target/release/mysticd /usr/local/bin/mysticd
+#   sudo cp dist/mysticd.service /etc/systemd/system/
+#   # edit User=/Group= below to a user that can reach /dev/hidraw* (see the
+#   # udev rule), then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now mysticd
+#
+# Clients connect to /run/mystic-light/mystic.sock and speak the line protocol
+# (see `mystic_light::daemon`): `fill 3 0000ff`, `set 3 ff0000,00ff00`, `off`.
+
+[Unit]
+Description=Mystic Light ARGB daemon
+After=multi-user.target
+
+[Service]
+Type=simple
+User=youruser
+Group=youruser
+# Creates /run/mystic-light owned by User=, cleaned up on stop.
+RuntimeDirectory=mystic-light
+ExecStart=/usr/local/bin/mysticd --socket /run/mystic-light/mystic.sock
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

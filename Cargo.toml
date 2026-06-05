@@ -20,6 +20,8 @@ default = ["hidapi", "cli"]
 hidapi = ["dep:hidapi"]
 # The `mystic` command-line tool. Implies the HID backend.
 cli = ["dep:clap", "dep:anyhow", "hidapi"]
+# The `mysticd` socket daemon (Unix only). Implies the HID backend.
+daemon = ["dep:anyhow", "hidapi"]
 
 [dependencies]
 thiserror = "2"
@@ -33,6 +35,10 @@ name = "mystic_light"
 [[bin]]
 name = "mystic"
 required-features = ["cli"]
+
+[[bin]]
+name = "mysticd"
+required-features = ["daemon"]
 
 [[example]]
 name = "breathe"

@@ -105,12 +105,43 @@ zero hardware:
 | `hid` | The real `HidTransport` (feature `hidapi`). |
 | `device` | `MysticLight`, the high-level controller. |
 
+### Daemon
+
+For continuous animation — or to let a process in another language drive the
+LEDs — run `mysticd`. It holds the single HID handle and serves a unix socket,
+so there's exactly one owner of the device and no contention:
+
+```sh
+cargo build --release --features daemon
+mysticd --socket /run/mystic-light/mystic.sock
+```
+
+Clients speak a newline-delimited text protocol — trivial from any language:
+
+```text
+ping                       -> pong
+fill <h> <hex> [count]     -> ok        e.g.  fill 3 0000ff 60
+set  <h> <hex,hex,...>     -> ok        e.g.  set 3 ff0000,00ff00,0000ff
+off  [<h>]                 -> ok
+```
+
+```python
+import socket
+s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+s.connect("/run/mystic-light/mystic.sock")
+s.sendall(b"fill 3 0000ff\n")
+print(s.recv(64))   # b'ok\n'
+```
+
+A sample systemd unit is in [`dist/mysticd.service`](dist/mysticd.service).
+
 ### Feature flags
 
 | Feature | Default | Effect |
 |---------|:-------:|--------|
 | `hidapi` | ✅ | The real USB-HID backend. |
 | `cli` | ✅ | The `mystic` binary (implies `hidapi`). |
+| `daemon` | — | The `mysticd` socket daemon, Unix only (implies `hidapi`). |
 
 For a pure, dependency-light protocol library (no `hidapi`, no C deps):
 
