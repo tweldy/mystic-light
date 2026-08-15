@@ -16,6 +16,27 @@ color, or stream animation frames from the host.
 > ⚠️ **Unofficial.** Built from community reverse-engineering; not affiliated
 > with or endorsed by MSI. Talking to hardware carries risk — use at your own.
 
+## Status
+
+**Work in progress — pre-1.0, and honest about it.**
+
+What works today: per-LED color on the JARGB headers, and a small daemon
+(`mysticd`) that owns the single HID handle and serves a unix socket, so several
+clients can share the hardware instead of fighting for it.
+
+Known gaps, in rough priority order:
+
+- **Hardware effect modes are not implemented.** The board's onboard ARGB effect
+  engine can't yet be driven or disabled from here, so it may contend with direct
+  writes on some boards.
+- **Board coverage is narrow** — verified on one family (below). Reports from
+  other MSI boards are genuinely useful.
+- **The API is not stable.** Expect breaking changes before 1.0.
+
+If you need something dependable for production lighting today, this isn't it
+yet. If you want direct, scriptable control of your own hardware and can tolerate
+rough edges, it works well.
+
 ## Supported hardware
 
 - **VID:PID** `0x0DB0:0x0076` (`MYSTIC LIGHT`)

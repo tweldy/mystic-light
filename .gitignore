@@ -1,3 +1,8 @@
 /target
 **/*.rs.bk
 *.pdb
+
+# Vendor documentation kept locally for reference only. MSI's board manual is
+# their copyrighted material — useful on this machine while reverse-engineering,
+# not ours to redistribute in a public repo (and it's 6.5 MB of binary besides).
+docs/*.pdf

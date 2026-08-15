@@ -6,7 +6,7 @@
 //!
 //! # Wire format
 //!
-//! A single write is one 761-byte HID **feature report**. The report id is the
+//! A single write is one 727-byte HID **feature report**. The report id is the
 //! first byte (as the `hidapi` convention requires). Layout:
 //!
 //! | Offset | Value      | Meaning                                       |
@@ -16,7 +16,7 @@
 //! | 2      | `0x04`     | "ARGB" command type                           |
 //! | 3      | `0..=2`    | Header index (`0`=JARGB1, `1`=JARGB2, `2`=JARGB3) |
 //! | 4–5    | `0x00`     | Reserved                                      |
-//! | 6      | `0..=60`   | LED count `n`                                 |
+//! | 6      | `0..=240`  | LED count `n`                                 |
 //! | 7..    | `n`×`RGB`  | Per-LED color, three bytes each, R,G,B order  |
 //! | ..761  | `0x00`     | Zero padding                                  |
 //!
@@ -34,9 +34,25 @@ pub const PRODUCT_ID: u16 = 0x0076;
 /// HID feature-report id used for ARGB writes.
 pub const REPORT_ID: u8 = 0x51;
 /// Total feature-report length, in bytes, including the leading report id.
-pub const REPORT_LEN: usize = 761;
+///
+/// Seven header bytes plus 720 bytes of color. This matches
+/// `sizeof(FeaturePacket_PerLED_761)` in OpenRGB's driver for this device — the
+/// "761" there names the *device family*, not this packet, which is why an
+/// earlier reading of the format put this at 761.
+pub const REPORT_LEN: usize = 727;
 /// Maximum number of LEDs addressable on a single header.
-pub const MAX_LEDS: usize = 60;
+///
+/// This is what one report can physically carry: the payload region runs from
+/// offset 7 to the end of the [`REPORT_LEN`]-byte report, three bytes per LED.
+/// It comes out at exactly 240, independently matching `GetMaxDirectLeds()` in
+/// OpenRGB's driver for this device — which is the confirmation that both this
+/// constant and [`REPORT_LEN`] are now right.
+///
+/// The previous value of 60 was an inherited guess. Counts above the real
+/// maximum are not clamped by the hardware: the board validates this field and
+/// drops the whole report, so an over-large count goes *dark* rather than
+/// lighting the first 240.
+pub const MAX_LEDS: usize = (REPORT_LEN - OFF_RGB) / 3;
 
 // Fixed framing constants.
 const FIXED_BYTE: u8 = 0x09; // offset 1
@@ -173,14 +189,17 @@ mod tests {
     fn rejects_more_than_max_leds() {
         let too_many = [Rgb::BLACK].repeat(MAX_LEDS + 1);
         let err = build_report(Header::Jargb1, &too_many).unwrap_err();
-        assert!(matches!(err, Error::TooManyLeds { got: 61, max: 60 }));
+        assert!(matches!(
+            err,
+            Error::TooManyLeds { got, max } if got == MAX_LEDS + 1 && max == MAX_LEDS
+        ));
     }
 
     #[test]
     fn exactly_max_leds_is_accepted() {
         let full = [Rgb::WHITE].repeat(MAX_LEDS);
         let r = build_report(Header::Jargb3, &full).unwrap();
-        assert_eq!(r[OFF_LED_COUNT], 60);
+        assert_eq!(r[OFF_LED_COUNT], MAX_LEDS as u8);
         // Last LED's bytes sit at the end of the payload region.
         let last = OFF_RGB + (MAX_LEDS - 1) * 3;
         assert_eq!(&r[last..last + 3], &[255, 255, 255]);
