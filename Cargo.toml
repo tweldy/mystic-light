@@ -2,7 +2,7 @@
 name = "mystic-light"
 version = "0.1.0"
 edition = "2021"
-rust-version = "1.74"
+rust-version = "1.85"
 description = "Direct per-LED control of MSI Mystic Light addressable-RGB (JARGB) headers over USB HID."
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/tweldy/mystic-light"
