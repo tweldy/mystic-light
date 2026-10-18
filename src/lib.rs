@@ -9,12 +9,12 @@
 //!
 //! # Layers
 //!
-//! * [`protocol`] — the pure, hardware-free wire format. Build a 761-byte HID
+//! * [`protocol`] — the pure, hardware-free wire format. Build a 727-byte HID
 //!   feature report from a slice of [`Rgb`] colors. Fully unit-tested.
 //! * [`transport`] — the [`Transport`](transport::Transport) trait: anything
 //!   that can accept a raw feature report. Ships with a
 //!   [`MockTransport`](transport::MockTransport) for tests and dry runs.
-//! * [`hid`] — the real [`HidTransport`](hid::HidTransport), backed by
+//! * [`hid`] — the real [`HidTransport`], backed by
 //!   `hidapi` (enabled by the `hidapi` feature, on by default).
 //! * [`device`] — [`MysticLight`], the high-level controller you'll usually
 //!   reach for.

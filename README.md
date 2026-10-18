@@ -1,9 +1,7 @@
 # mystic-light
 
 [![CI](https://github.com/tweldy/mystic-light/actions/workflows/ci.yml/badge.svg)](https://github.com/tweldy/mystic-light/actions/workflows/ci.yml)
-[![crates.io](https://img.shields.io/crates/v/mystic-light.svg)](https://crates.io/crates/mystic-light)
-[![docs.rs](https://img.shields.io/docsrs/mystic-light)](https://docs.rs/mystic-light)
-[![license](https://img.shields.io/crates/l/mystic-light.svg)](#license)
+[![license](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 
 Direct, per-LED control of **MSI Mystic Light** addressable-RGB (JARGB) headers
 over USB HID — from Rust, on Linux, with no vendor software and no root.
@@ -121,7 +119,7 @@ zero hardware:
 
 | Layer | What it is |
 |-------|------------|
-| `protocol` | Pure functions building the 761-byte report. No I/O. |
+| `protocol` | Pure functions building the 727-byte report. No I/O. |
 | `transport` | The `Transport` trait + a `MockTransport` recorder. |
 | `hid` | The real `HidTransport` (feature `hidapi`). |
 | `device` | `MysticLight`, the high-level controller. |

@@ -13,7 +13,7 @@ by the community; this crate is unofficial and not affiliated with MSI.
 
 ## Write
 
-A single update is one **HID feature report** of **761 bytes**. The first byte
+A single update is one **HID feature report** of **727 bytes**. The first byte
 is the report id, per the usual HID convention (the `hidapi`
 `send_feature_report` call expects it there).
 
@@ -25,9 +25,9 @@ is the report id, per the usual HID convention (the `hidapi`
 | `3` | `0x00..0x02` | Header index: `0` = JARGB1, `1` = JARGB2, `2` = JARGB3 |
 | `4` | `0x00` | Reserved |
 | `5` | `0x00` | Reserved |
-| `6` | `0x00..0x3C` | LED count `n` (0..60) |
+| `6` | `0x00..0xF0` | LED count `n` (0..240). The board validates this field and drops the whole report if it is too large, so an over-large count goes dark rather than lighting the first 240. |
 | `7 .. 7 + 3n` | `R,G,B …` | Per-LED color, three bytes each, in R, G, B order |
-| `7 + 3n .. 761` | `0x00` | Zero padding |
+| `7 + 3n .. 727` | `0x00` | Zero padding |
 
 Each header is addressed independently: to update all three, send three
 reports with byte `3` set to `0`, `1`, and `2` respectively.

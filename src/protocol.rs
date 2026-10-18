@@ -18,7 +18,7 @@
 //! | 4–5    | `0x00`     | Reserved                                      |
 //! | 6      | `0..=240`  | LED count `n`                                 |
 //! | 7..    | `n`×`RGB`  | Per-LED color, three bytes each, R,G,B order  |
-//! | ..761  | `0x00`     | Zero padding                                  |
+//! | ..727  | `0x00`     | Zero padding                                  |
 //!
 //! Protocol attribution: the framing was reverse-engineered by the community;
 //! see `docs/PROTOCOL.md` for references.
